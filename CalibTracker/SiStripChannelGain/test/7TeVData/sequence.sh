@@ -1,4 +1,4 @@
-# Methode to publish png pictures on the web. Will be used at the end of the script:
+Methode to publish png pictures on the web. Will be used at the end of the script:
 CreateIndex ()
 {
     COUNTER=0
@@ -46,14 +46,18 @@ if [ "$#" != '1' ]; then
 
    if [ "$#" == '0' ]; then
       sh PlotMacro.sh
+      python ../trendPlot/generateTrendPlots.py -o Pictures 
+
    fi
 
    if [ "$#" == '3' ]; then
       sh PlotMacro.sh "\"$2\"" "\"$3\""
+      python ../trendPlot/generateTrendPlots.py -o Pictures 
    fi
 else
    WORKDIR=$PWD
-   DIRPATH=/afs/cern.ch/cms/tracker/sistrvalidation/WWW/CalibrationValidation/ParticleGain/$1
+#   DIRPATH=/afs/cern.ch/cms/tracker/sistrvalidation/WWW/CalibrationValidation/ParticleGain/$1
+   DIRPATH=/afs/cern.ch/user/d/delcourt/work/tempWebpage/$1
    echo "Creating directories"
    mkdir $DIRPATH
    mkdir $DIRPATH/cfg
@@ -71,6 +75,7 @@ else
    cp Validation_ASCII.txt $DIRPATH/log/.
    cp Pictures/*.txt $DIRPATH/log/.
    cp Pictures/Gains_*.png $DIRPATH/plots_gain/.
+   cp Pictures/trend_*.png $DIRPATH/plots_gain/.
    rm $DIRPATH/plots_gain/Gains_Charge.png
    rm $DIRPATH/plots_gain/Gains_MPVs.png
    rm $DIRPATH/plots_gain/Gains_MPVsSubDet.png

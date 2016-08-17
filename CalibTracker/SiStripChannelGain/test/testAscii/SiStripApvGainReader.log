@@ -1,0 +1,22 @@
+%MSG-i CondDBESSource:  AfterSource 24-May-2016 17:17:48 CEST BeforeEvents
+Getting data for record "SiStripApvGainRcd" to be consumed by run: 251522 lumi: 0 event: 0, timestamp: 1; from CondDBESSource::setIntervalFor
+%MSG
+%MSG-i CondDBESSource:  AfterSource 24-May-2016 17:17:48 CEST BeforeEvents
+Processing record "SiStripApvGainRcd" and label "" for run: 251522 lumi: 0 event: 0, timestamp: 1; from CondDBESSource::setIntervalFor
+%MSG
+%MSG-i CondDBESSource:  AfterSource 24-May-2016 17:17:48 CEST BeforeEvents
+Validity coming from IOV sequence for record "SiStripApvGainRcd" and label "": (251522, 18446744073709551615) for time (type: runnumber) 251522; from CondDBESSource::setIntervalFor
+%MSG
+%MSG-i CondDBESSource:  AfterSource 24-May-2016 17:17:48 CEST BeforeEvents
+Setting validity for record "SiStripApvGainRcd" and corresponding label(s): starting at run: 251522 lumi: 0 event: 0, timestamp: 0, ending at run: 4294967295 lumi: 4294967295 event: 18446744073709551615, timestamp: 0, for run: 251522 lumi: 0 event: 0, timestamp: 1; from CondDBESSource::setIntervalFor
+%MSG
+Begin processing the 1st record. Run 251522, Event 1, LumiSection 1 at 24-May-2016 17:17:48.784 CEST
+----- Begin Fatal Exception 24-May-2016 17:17:48 CEST-----------------------
+An exception of category 'NoRecord' occurred while
+   [0] Processing run: 251522 lumi: 1 event: 1
+   [1] Running path 'p1'
+   [2] Calling event method for module SiStripApvGainReader/'reader'
+Exception Message:
+No "SiStripGainRcd" record found in the EventSetup.
+ Please add an ESSource or ESProducer that delivers such a record.
+----- End Fatal Exception -------------------------------------------------

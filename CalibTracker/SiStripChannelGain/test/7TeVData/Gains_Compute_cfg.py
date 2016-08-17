@@ -44,6 +44,7 @@ if(XXX_PCL_XXX):
    process.source = cms.Source("PoolSource",
        secondaryFileNames = cms.untracked.vstring(),
        fileNames = calibTreeList,
+       skipBadFiles = cms.untracked.bool(True),
        processingMode = cms.untracked.string('RunsAndLumis')
    )
 else:

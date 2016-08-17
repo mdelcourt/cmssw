@@ -105,7 +105,7 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
    t1->SetBranchAddress("NEntries"          ,&tree_NEntries   );
    t1->SetBranchAddress("isMasked"          ,&tree_isMasked   );
 
-   TH2S* ChargeDistrib  = (TH2S*)GetObjectFromPath(f1,moduleName+"Charge_Vs_Index_"+modeName);
+   TH2D* ChargeDistrib  = (TH2D*)GetObjectFromPath(f1,moduleName+"Charge_Vs_Index_"+modeName);
    //TH2D* ChargeDistribA = (TH2D*)GetObjectFromPath(f1,moduleName+"Charge_Vs_Index_Absolute_"+modeName);
 
    TH2D* Charge_Vs_PathlengthTIB   = (TH2D*)GetObjectFromPath(f1,moduleName+"Charge_Vs_PathlengthTIB_"+modeName);
@@ -371,6 +371,7 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
    unsigned int CountAPV_NoGain   = 0;
    unsigned int CountAPV_NoGainU  = 0;
    unsigned int CountAPV_LowGain  = 0;
+   unsigned int CountAPV_HighGain = 0;
    unsigned int CountAPV_DiffGain = 0;
 
    TrackerMap* tkmap = new TrackerMap("  ParticleGain  ");
@@ -396,63 +397,98 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
    tkmap->reset();    
 
 
-   pFile = fopen((output + "_LowResponseModule.txt").c_str(),"w");
+   pFile = fopen((output + "_NoClusterForAll.txt").c_str(),"w");
    fprintf(pFile,"\n\nALL APVs WITH NO ENTRIES (NO RECO CLUSTER ON IT)\n--------------------------------------------\n");
    printf("Looping on the Tree          :");
    for (unsigned int ientry = 0; ientry < t1->GetEntries(); ientry++) {      
       if(ientry%TreeStep==0){printf(".");fflush(stdout);}
       t1->GetEntry(ientry);  if(tree_SubDet<3)continue;
       CountAPV_Total++;
-      if(tree_NEntries==0){fprintf(pFile,"%i-%i, ",tree_DetId,tree_APVId);  CountAPV_NoEntry++;}
+      if(tree_NEntries==0){fprintf(pFile,"%i-%i\n",tree_DetId,tree_APVId);  CountAPV_NoEntry++;}
    }printf("\n");
    fprintf(pFile,"\n--> %i / %i = %f%% APV Concerned\n",CountAPV_NoEntry,CountAPV_Total,(100.0*CountAPV_NoEntry)/CountAPV_Total);
+   fclose(pFile);
 
 
-   fprintf(pFile,"\n\nUNMASKED APVs WITH NO ENTRIES (NO RECO CLUSTER ON IT)\n--------------------------------------------\n");
+   pFile = fopen((output + "_NoClusterForUnmasked.txt").c_str(),"w");
+   fprintf(pFile,"\n\nUNMASKED APVs WITHOUT ANY CLUSTER (NO RECO CLUSTER ON IT)\n--------------------------------------------\n");
    printf("Looping on the Tree          :");
    for (unsigned int ientry = 0; ientry < t1->GetEntries(); ientry++) {
       if(ientry%TreeStep==0){printf(".");fflush(stdout);}
       t1->GetEntry(ientry);   if(tree_SubDet<3)continue;
-      if(tree_NEntries==0 && !tree_isMasked){fprintf(pFile,"%i-%i, ",tree_DetId,tree_APVId); tkmap->fill(tree_DetId, 1); CountAPV_NoEntryU++;}
+      if(tree_NEntries==0 && !tree_isMasked){fprintf(pFile,"%i-%i\n",tree_DetId,tree_APVId); tkmap->fill(tree_DetId, 1); CountAPV_NoEntryU++;}
    }printf("\n");
    fprintf(pFile,"\n--> %i / %i = %f%% APV Concerned\n",CountAPV_NoEntryU,CountAPV_Total,(100.0*CountAPV_NoEntryU)/CountAPV_Total);
+   fclose(pFile);
 
    tkmap->setTitle(TextToPrint + " : #Unmasked APV without any cluster");
    tkmap->save                 (true, 1.0, 6.0, output + "_TKMap_NoCluster_MECH.png");
    tkmap->reset();    
 
 
+   pFile = fopen((output + "_NoGainForAll.txt").c_str(),"w");
    fprintf(pFile,"\n\nALL APVs WITH NO GAIN COMPUTED\n--------------------------------------------\n");
    printf("Looping on the Tree          :");
    for (unsigned int ientry = 0; ientry < t1->GetEntries(); ientry++) {
       if(ientry%TreeStep==0){printf(".");fflush(stdout);}
       t1->GetEntry(ientry);   if(tree_SubDet<3)continue;
-      if(tree_FitMPV<0){fprintf(pFile,"%i-%i, ",tree_DetId,tree_APVId); CountAPV_NoGain++;}
+      if(tree_FitMPV<0){fprintf(pFile,"%i-%i\n",tree_DetId,tree_APVId); CountAPV_NoGain++;}
    }printf("\n");
    fprintf(pFile,"\n--> %i / %i = %f%% APV Concerned\n",CountAPV_NoGain,CountAPV_Total,(100.0*CountAPV_NoGain)/CountAPV_Total);
+   fclose(pFile);
 
+   pFile = fopen((output + "_NoGainForUnmasked.txt").c_str(),"w");
    fprintf(pFile,"\n\nUNMASKED APVs WITH NO GAIN COMPUTED\n--------------------------------------------\n");
    printf("Looping on the Tree          :");
    for (unsigned int ientry = 0; ientry < t1->GetEntries(); ientry++) {
       if(ientry%TreeStep==0){printf(".");fflush(stdout);}
       t1->GetEntry(ientry);   if(tree_SubDet<3)continue;
-      if(tree_FitMPV<0 && !tree_isMasked){fprintf(pFile,"%i-%i, ",tree_DetId,tree_APVId);  tkmap->fill(tree_DetId, 1); CountAPV_NoGainU++;}
+      if(tree_FitMPV<0 && !tree_isMasked){fprintf(pFile,"%i-%i\n",tree_DetId,tree_APVId);  tkmap->fill(tree_DetId, 1); CountAPV_NoGainU++;}
    }printf("\n");
    fprintf(pFile,"\n--> %i / %i = %f%% APV Concerned\n",CountAPV_NoGainU,CountAPV_Total,(100.0*CountAPV_NoGainU)/CountAPV_Total);
+   fclose(pFile);
 
    tkmap->setTitle(TextToPrint + " : #Unmasked APV for which no gain was computed");
    tkmap->save                 (true, 1.0, 6.0, output + "_TKMap_NoGain_MECH.png");
    tkmap->reset();
 
 
+   pFile = fopen((output + "_LowResponseForUnmasked.txt").c_str(),"w");
    fprintf(pFile,"\n\nUNMASKED APVs WITH LOW RESPONSE\n--------------------------------------------\n");
+   fprintf(pFile,"  ID-APV     Fit MPV   Gain\n");
    printf("Looping on the Tree          :");
    for (unsigned int ientry = 0; ientry < t1->GetEntries(); ientry++) {
       if(ientry%TreeStep==0){printf(".");fflush(stdout);}
       t1->GetEntry(ientry);   if(tree_SubDet<3)continue;
-      if(tree_FitMPV>0 && tree_FitMPV<220 && !tree_isMasked){fprintf(pFile,"%i-%i, ",tree_DetId,tree_APVId); tkmap->fill(tree_DetId, 1); CountAPV_LowGain++;}
+      if(tree_FitMPV>0 && tree_FitMPV<220 && !tree_isMasked) {
+          fprintf(pFile,"%i-%i   %5.1f   %4.1f\n",tree_DetId,tree_APVId,tree_FitMPV,tree_Gain); 
+          tkmap->fill(tree_DetId, 1); 
+          CountAPV_LowGain++;
+      }
    }printf("\n");
    fprintf(pFile,"\n--> %i / %i = %f%% APV Concerned\n",CountAPV_LowGain,CountAPV_Total,(100.0*CountAPV_LowGain)/CountAPV_Total);
+   fclose(pFile);
+
+   tkmap->setTitle(TextToPrint + " : #Unmasked APV with a gain > 1.26");
+   tkmap->save                 (true, 1.0, 6.0, output + "_TKMap_highGain_MECH.png");
+   tkmap->reset();
+
+
+   pFile = fopen((output + "_HighResponseForUnmasked.txt").c_str(),"w");
+   fprintf(pFile,"\n\nUNMASKED APVs WITH HIGH RESPONSE\n--------------------------------------------\n");
+   fprintf(pFile,"  ID-APV     Fit MPV   Gain\n");
+   printf("Looping on the Tree          :");
+   for (unsigned int ientry = 0; ientry < t1->GetEntries(); ientry++) {
+      if(ientry%TreeStep==0){printf(".");fflush(stdout);}
+      t1->GetEntry(ientry);   if(tree_SubDet<3)continue;
+      if(tree_FitMPV>0 && tree_FitMPV>380 && !tree_isMasked) {
+          fprintf(pFile,"%i-%i   %5.1f   %4.1f\n",tree_DetId,tree_APVId,tree_FitMPV,tree_Gain);
+          tkmap->fill(tree_DetId, 1);
+          CountAPV_HighGain++;
+      }
+   }printf("\n");
+   fprintf(pFile,"\n--> %i / %i = %f%% APV Concerned\n",CountAPV_HighGain,CountAPV_Total,(100.0*CountAPV_HighGain)/CountAPV_Total);
+   fclose(pFile);
 
 
    tkmap->setTitle(TextToPrint + " : #Unmasked APV with a gain<0.75");
@@ -460,12 +496,14 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
    tkmap->reset();
 
 
+
+   pFile = fopen((output + "_BigGainChangeForUnmasked.txt").c_str(),"w");
    fprintf(pFile,"\n\nUNMASKED APVs WITH SIGNIFICANT CHANGE OF GAIN VALUE\n--------------------------------------------\n");
    printf("Looping on the Tree          :");
    for (unsigned int ientry = 0; ientry < t1->GetEntries(); ientry++) {
       if(ientry%TreeStep==0){printf(".");fflush(stdout);}
       t1->GetEntry(ientry);   if(tree_SubDet<3)continue;
-      if(tree_FitMPV>0 && !tree_isMasked && (tree_Gain/tree_PrevGain<0.7 || tree_Gain/tree_PrevGain>1.3)){fprintf(pFile,"%i-%i, ",tree_DetId,tree_APVId); tkmap->fill(tree_DetId, 1); CountAPV_DiffGain++;}
+      if(tree_FitMPV>0 && !tree_isMasked && (tree_Gain/tree_PrevGain<0.7 || tree_Gain/tree_PrevGain>1.3)){fprintf(pFile,"%i-%i\n",tree_DetId,tree_APVId); tkmap->fill(tree_DetId, 1); CountAPV_DiffGain++;}
    }printf("\n");
    fprintf(pFile,"\n--> %i / %i = %f%% APV Concerned\n",CountAPV_DiffGain,CountAPV_Total,(100.0*CountAPV_DiffGain)/CountAPV_Total);
    fclose(pFile);
@@ -729,6 +767,7 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
     DrawSuperposedHistos((TH1**)Histos, legend, "",  "Error on MPV [ADC/mm]", "Number of APVs", 0,500, 0,0);
     DrawStatBox(Histos,legend,true);
     c1->SetLogy(true);
+    c1->SetLogx(true);
     DrawPreliminary(TextToPrint);
     SaveCanvas(c1,output,"Error");
     delete c1;
@@ -736,7 +775,8 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
     c1 = new TCanvas("c1","c1,",600,600);          legend.clear();
     Histos[0] = MPVErrorVsMPV;                     legend.push_back("Error Vs MPV");
     DrawTH2D((TH2D**)Histos,legend, "COLZ", "MPV [ADC/mm]", "Error on MPV [ADC/mm]", 0,0, 0,0);
-    c1->SetLogz(true);
+    c1->SetLogy(false);
+    c1->SetLogz();
     DrawPreliminary(TextToPrint);
     SaveCanvas(c1,output,"Error_Vs_MPV", true);
     delete c1;
@@ -744,7 +784,8 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
     c1 = new TCanvas("c1","c1,",600,600);          legend.clear();
     Histos[0] = MPVErrorVsEta;                     legend.push_back("Error Vs Eta");
     DrawTH2D((TH2D**)Histos,legend, "COLZ", "module #eta", "Error on MPV [ADC/mm]", 0,0, 0,0);
-    c1->SetLogz(true);
+    c1->SetLogy(false);
+    c1->SetLogz();
     DrawPreliminary(TextToPrint);
     SaveCanvas(c1,output,"Error_Vs_Eta", true);
     delete c1;
@@ -752,7 +793,8 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
     c1 = new TCanvas("c1","c1,",600,600);          legend.clear();
     Histos[0] = MPVErrorVsPhi;                     legend.push_back("Error Vs Phi");
     DrawTH2D((TH2D**)Histos,legend, "COLZ", "module #phi", "Error on MPV [ADC/mm]", 0,0, 0,0);
-    c1->SetLogz(true);
+    c1->SetLogy(false);
+    c1->SetLogz();
     DrawPreliminary(TextToPrint);
     SaveCanvas(c1,output,"Error_Vs_Phi", true);
     delete c1;
@@ -760,6 +802,8 @@ void PlotMacro_Core(std::string input, std::string moduleName, std::string modeN
     c1 = new TCanvas("c1","c1,",600,600);          legend.clear();
     Histos[0] = MPVErrorVsN;                       legend.push_back("Error Vs Entries");
     DrawTH2D((TH2D**)Histos,legend, "COLZ", "Number of Entries", "Error on MPV [ADC/mm]", 0,0, 0,0);
+    c1->SetLogx(true);
+    c1->SetLogy(true);
     c1->SetLogz(true);
     DrawPreliminary(TextToPrint);
     SaveCanvas(c1,output,"Error_Vs_N", true);
