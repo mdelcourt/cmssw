@@ -31,12 +31,14 @@ options.register('outputFile',
                  "name for the output root file (\"calibTreeTest.root\" is default)")
 
 options.register('inputFiles',
-                 "/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-16Dec2015-v1/60007/869EE593-1FAB-E511-AF99-0025905A60B4.root",
+#                 "/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-16Dec2015-v1/60007/869EE593-1FAB-E511-AF99-0025905A60B4.root",
 #                  '/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-16Dec2015-v1/60009/0C35C6BF-D3AA-E511-9BC9-0CC47A4C8E16.root',
 #                  '/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-16Dec2015-v1/60009/38B847F9-05AA-E511-AB78-00259074AE82.root',
 #                  '/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-16Dec2015-v1/60009/D0BAD20B-09AB-E511-B073-0026189438F6.root',
 #                  '/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-16Dec2015-v1/60009/DEFA8704-CCAA-E511-8203-0CC47A4D7634.root',
 #                  '/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-16Dec2015-v1/60009/FE24690A-2DAA-E511-A96A-00259074AE3E.root',
+#                  '/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-16Dec2015-v1/00000/0443D984-F9BA-E511-A740-0025905B8610.root',
+                  '/store/data/Run2015D/ZeroBias/ALCARECO/SiStripCalMinBias-14Apr2016-v1/50000/0085DB76-AC02-E611-9F0C-0002C94CD12E.root',
                  VarParsing.VarParsing.multiplicity.list,
                  VarParsing.VarParsing.varType.string,
                  "file to process")
@@ -63,7 +65,6 @@ print "inputCollection   : ", options.inputCollection
 print "maxEvents         : ", options.maxEvents
 print "outputFile        : ", options.outputFile
 print "inputFiles        : ", options.inputFiles
-
 
 
 process = cms.Process('CALIB')
@@ -98,8 +99,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 #definition of input collection
-process.CalibrationTracks.src = 'ALCARECOSiStripCalMinBias' #cms.InputTag( options.inputCollection )
-process.shallowTracks.Tracks  = 'ALCARECOSiStripCalMinBias' #cms.InputTag( options.inputCollection )
+process.CalibrationTracks.src = cms.InputTag( options.inputCollection )
+process.shallowTracks.Tracks  = cms.InputTag( options.inputCollection )
 #process.shallowGainCalibrationAllBunch   = 'ALCARECOSiStripCalMinBias' #cms.InputTag( options.inputCollection )
 #process.shallowGainCalibrationAllBunch0T = 'ALCARECOSiStripCalMinBias' #cms.InputTag( options.inputCollection )
 
