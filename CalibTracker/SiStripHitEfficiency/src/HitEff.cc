@@ -76,7 +76,7 @@ HitEff::HitEff(const edm::ParameterSet& conf) :
   combinatorialTracks_token_( consumes< reco::TrackCollection >(conf.getParameter<edm::InputTag>("combinatorialTracks")) ),
   trajectories_token_( consumes< std::vector<Trajectory> >(conf.getParameter<edm::InputTag>("trajectories")) ),
   clusters_token_( consumes< edmNew::DetSetVector<SiStripCluster> >(conf.getParameter<edm::InputTag>("siStripClusters")) ),
-  digis_token_( consumes< DetIdCollection >(conf.getParameter<edm::InputTag>("siStripDigis")) ),
+//  digis_token_( consumes< DetIdCollection >(conf.getParameter<edm::InputTag>("siStripDigis")) ),
   trackerEvent_token_( consumes< MeasurementTrackerEvent>(conf.getParameter<edm::InputTag>("trackerEvent")) ),
   conf_(conf)
 {
@@ -220,9 +220,9 @@ void HitEff::analyze(const edm::Event& e, const edm::EventSetup& es){
   const MagneticField* magField_ = magFieldHandle.product();
 
   // get the list of module IDs with FED-detected errors
-  edm::Handle< DetIdCollection > fedErrorIds;
+//  edm::Handle< DetIdCollection > fedErrorIds;
   //e.getByLabel("siStripDigis", fedErrorIds );
-  e.getByToken(digis_token_, fedErrorIds );
+//  e.getByToken(digis_token_, fedErrorIds );
 
   ESHandle<MeasurementTracker> measurementTrackerHandle;
   es.get<CkfComponentsRecord>().get(measurementTrackerHandle);
@@ -693,10 +693,11 @@ void HitEff::analyze(const edm::Event& e, const edm::EventSetup& es){
 	      }
 
 	      //check for FED-detected errors and include those in SiStripQualBad
-	      for (unsigned int ii=0;ii< fedErrorIds->size();ii++) {
+/*	      for (unsigned int ii=0;ii< fedErrorIds->size();ii++) {
 		if (iidd == (*fedErrorIds)[ii].rawId() )
 		  SiStripQualBad = 1;
 	      }
+        */
 	      
 	      TrajLocX = xloc;
 	      TrajLocY = yloc;
