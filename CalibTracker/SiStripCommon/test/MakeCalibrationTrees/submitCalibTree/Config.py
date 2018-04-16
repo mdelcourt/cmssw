@@ -69,15 +69,15 @@ class configuration:
          print "RUN dir does not exist."
          goodConfig = False
 
-      #Check castor path exists FIXME
-      cmd = self.eosLs.replace("-lrth","")+self.CASTORDIR
+      #Check castor path exists
+      cmd = self.initEnv + self.eosLs.replace("-lrth","")+self.CASTORDIR
       cmd = cmd[:-2]+"*"
       (status,output) = commands.getstatusoutput(cmd)
       if status or not self.CASTORDIR.split("/")[-1] in output:
          print cmd
          print output
          print "CASTOR dir does not exist."
-         goodConfig = False
+#         goodConfig = False #doesn't work within cron job... FIXME
       self.integrity = goodConfig
       return goodConfig
 
